@@ -1,4 +1,5 @@
 import * as cdk from '@aws-cdk/core';
+import * as iam from '@aws-cdk/aws-iam';
 import * as ec2 from '@aws-cdk/aws-ec2';
 import * as ecs from '@aws-cdk/aws-ecs';
 import * as elb from '@aws-cdk/aws-elasticloadbalancingv2';
@@ -40,6 +41,21 @@ export class CdkEcsStack extends cdk.Stack {
       logging,
       portMappings: [{ containerPort: 8080, protocol: ecs.Protocol.TCP},],
     });
+
+    const taskDefExecRolePolicyStmt = new iam.PolicyStatement({
+            effect: iam.Effect.ALLOW,
+            actions: [            
+              'ecr:GetAuthorizationToken',
+              'ecr:BatchCheckLayerAvailability',
+              'ecr:GetDownloadUrlForLayer',
+              'ecr:BatchGetImage',
+              'logs:CreateLogStream',
+              'logs:PutLogEvents'
+            ],
+            resources: ["*"],
+          });
+
+    taskDef.addToExecutionRolePolicy(taskDefExecRolePolicyStmt);
 
     const appSG = new ec2.SecurityGroup(this, 'AppSG', {
       vpc,
