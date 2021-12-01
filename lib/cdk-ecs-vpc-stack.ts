@@ -4,7 +4,7 @@ import { StackProps } from '@aws-cdk/core';
 
  
 interface CdkEcsVPCStackProps extends StackProps {
-  createAWSEndpoints: boolean
+  createAWSEndpoints: boolean,
 }
 
 export class CdkEcsVPCStack extends cdk.Stack {
@@ -28,7 +28,7 @@ export class CdkEcsVPCStack extends cdk.Stack {
         {
           cidrMask: 24,
           name: 'ingress',
-          subnetType: ec2.SubnetType.PUBLIC,
+          subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
         },
         {
           cidrMask: 24,

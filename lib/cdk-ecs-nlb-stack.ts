@@ -21,7 +21,7 @@ export class CdkEcsNLBStack extends cdk.Stack {
       vpc: vpc,
       vpcSubnets: vpc.selectSubnets({onePerAz: true, subnetGroupName: 'ingress'}),
       crossZoneEnabled: true,
-      internetFacing: true,
+      internetFacing: false,
     });
 
     if ('bucket' in props && props.bucket !== undefined ) this.nlb.logAccessLogs(props.bucket);
