@@ -23,4 +23,4 @@ import { CdkEcsVPCStack } from '../lib/cdk-ecs-vpc-stack';
 const app = new cdk.App();
 const vpcStack = new CdkEcsVPCStack(app, 'EcsVPCStack');
 const nlbStack = new CdkEcsNLBStack(app, 'EcsNLBStack', {vpc: vpcStack.vpc});
-new CdkEcsStack(app, 'EcsStack', { vpc: vpcStack.vpc, nlb: nlbStack.nlb, image: '910537616703.dkr.ecr.us-east-1.amazonaws.com/nginx:test' });
+const ecsStack = new CdkEcsStack(app, 'EcsStack', { vpc: vpcStack.vpc, nlb: nlbStack.nlb, image: '910537616703.dkr.ecr.us-east-1.amazonaws.com/nginx:test' });

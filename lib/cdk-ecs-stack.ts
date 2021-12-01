@@ -3,15 +3,19 @@ import * as iam from '@aws-cdk/aws-iam';
 import * as ec2 from '@aws-cdk/aws-ec2';
 import * as ecs from '@aws-cdk/aws-ecs';
 import * as elb from '@aws-cdk/aws-elasticloadbalancingv2';
+import * as apiv2 from '@aws-cdk/aws-apigatewayv2';
+import * as apiIntegration from '@aws-cdk/aws-apigatewayv2-integrations';
+import { Vpc } from '@aws-cdk/aws-ec2';
 
 interface ECSStackProps extends cdk.StackProps{
   vpc: ec2.Vpc;
   image: string;
-  nlb?: elb.NetworkLoadBalancer;
+  nlb: elb.NetworkLoadBalancer;
   //alb?: elb.ApplicationLoadBalancer;
 }
 
 export class CdkEcsStack extends cdk.Stack {
+
   constructor(scope: cdk.Construct, id: string, props: ECSStackProps) {
     super(scope, id, props);
     
@@ -20,7 +24,6 @@ export class CdkEcsStack extends cdk.Stack {
 
     const cluster = new ecs.Cluster(this, 'Cluster', {
       vpc: vpc,
-
       containerInsights: true,
       enableFargateCapacityProviders: true
     });
@@ -74,14 +77,22 @@ export class CdkEcsStack extends cdk.Stack {
       securityGroups: [ appSG ],
     });
 
-    if ('nlb' in props && props.nlb !== undefined) { 
-      const nlb = props.nlb 
-      const listener = nlb.addListener('NLBListener', {port: 80,});
-      listener.addTargets('NLBListenerTargets', {
-          targets: [service],
-          port: 80,
-        });
-    }
+    const nlb = props.nlb 
+    const listener = nlb.addListener('NLBListener', {port: 80,});
+    listener.addTargets('NLBListenerTargets', {
+        targets: [service],
+        port: 80,
+      });
+
+    const httpEndpoint = new apiv2.HttpApi(this, 'HttpProxyPrivateApi', {
+      defaultIntegration: new apiIntegration.HttpNlbIntegration({
+        listener,
+        vpcLink: new apiv2.VpcLink(this, 'HTTPAPIVPCLink', {
+          vpc: vpc,
+          subnets: vpc.selectSubnets({onePerAz: true, subnetGroupName: 'ingress'})
+        })
+      }),
+    });
 
   }
 }
