@@ -1,17 +1,17 @@
 # cdk-ecs-fargate-nlb
 Demo ECS Fargate Cluster Deployment with CDK Typescript
 =======
-# Welcome to your CDK TypeScript project!
 
-This is a blank project for TypeScript development with CDK.
+# High Level Diagram
+![Private ECS Fargate Cluster](images/PrivateECSFargate.png)
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+## Resource created: 
+- VPC Fully Private
+- VPC EndPoints
+- Network LB + Listener targetting ECS Service 
+- ECS Cluster
+- ECS Fargate Task Definition
+- ECS Service + ECS Task
+- HTTP API Gateway
+- API Gateway VPCLink
 
-## Useful commands
-
- * `npm run build`   compile typescript to js
- * `npm run watch`   watch for changes and compile
- * `npm run test`    perform the jest unit tests
- * `cdk deploy`      deploy this stack to your default AWS account/region
- * `cdk diff`        compare deployed stack with current state
- * `cdk synth`       emits the synthesized CloudFormation template
