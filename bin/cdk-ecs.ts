@@ -2,9 +2,10 @@
 import 'source-map-support/register';
 import * as cdk from '@aws-cdk/core';
 import { CdkEcsStack } from '../lib/cdk-ecs-stack';
+import { CdkEcsNLBStack } from '../lib/cdk-ecs-nlb-stack';
+import { CdkEcsVPCStack } from '../lib/cdk-ecs-vpc-stack';
 
-const app = new cdk.App();
-new CdkEcsStack(app, 'CdkEcsStack', {
+
   /* If you don't specify 'env', this stack will be environment-agnostic.
    * Account/Region-dependent features and context lookups will not work,
    * but a single synthesized template can be deployed anywhere. */
@@ -18,4 +19,8 @@ new CdkEcsStack(app, 'CdkEcsStack', {
   // env: { account: '123456789012', region: 'us-east-1' },
 
   /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
-});
+
+const app = new cdk.App();
+const vpcStack = new CdkEcsVPCStack(app, 'CdkEcsVPCStack');
+const nlbStack = new CdkEcsNLBStack(app, 'CdkEcsNLBStack', {vpc: vpcStack.vpc});
+new CdkEcsStack(app, 'CdkEcsStack', { vpc: vpcStack.vpc, nlb: nlbStack.nlb, image: '910537616703.dkr.ecr.us-east-1.amazonaws.com/nginx:test' });
