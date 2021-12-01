@@ -1,4 +1,4 @@
-# cdk-ecs-fargate
+# cdk-ecs-fargate-nlb
 Demo ECS Fargate Cluster Deployment with CDK Typescript
 =======
 # Welcome to your CDK TypeScript project!
