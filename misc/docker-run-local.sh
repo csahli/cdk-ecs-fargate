@@ -1,0 +1,2 @@
+docker run -d --link postgres-container:db --name beapp -e DBHOST=db -e DBPORT=5432 -e DBPASS='My:s3Cr3t/' nodebeapp
+docker run -d --link postgres-container:db -p 3000:80 --name beapp -e NODEPORT=80 -e DBHOST=db -e DBPORT=5432 -e DBPASS='My:s3Cr3t/' nodebeapp 

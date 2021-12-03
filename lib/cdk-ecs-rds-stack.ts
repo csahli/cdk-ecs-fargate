@@ -23,34 +23,12 @@ export class CdkDBStack extends Stack {
   constructor(scope: App, id: string, props: RDSStackProps) {
     super(scope, id, props);
 
-    // const dbCredentialsSecret = new secretsmanager.Secret(
-    //   this,
-    //   `DBCredentialsSecret`,
-    //   {
-    //     secretName: `DBCredentials`,
-    //     generateSecretString: {
-    //       secretStringTemplate: JSON.stringify({
-    //         username: "dbuser",
-    //       }),
-    //       excludePunctuation: true,
-    //       includeSpace: false,
-    //       generateStringKey: "password",
-    //     },
-    //   }
-    // );
-
-    // const ssmParam = new ssm.StringParameter(this, "DBCredentialsArn", {
-    //   parameterName: `DBCredentialsArn`,
-    //   stringValue: dbCredentialsSecret.secretArn,
-    // });
-
     const sg = new SecurityGroup(this, "DBSecurityGroup", {
       allowAllOutbound: false,
       vpc: props.vpc,
       description: "ECS DB Security Group",
     });
     
-
     let engine = 'AuroraMySQL';
     let dbPort = 3306;  
     let rotationApp = secretsmanager.SecretRotationApplication.MYSQL_ROTATION_SINGLE_USER;
@@ -88,9 +66,11 @@ export class CdkDBStack extends Stack {
           onePerAz: true,
           subnetGroupName: "rds",
         }),
+        performanceInsightRetention: 24*3600*7,
         instanceType: InstanceType.of(InstanceClass.R6G, InstanceSize.LARGE),
         securityGroups: [sg],
       },
+      storageEncrypted: true,
     });
 
     new secretsmanager.SecretRotation(this, 'DbAdminUserSecretRotation', {

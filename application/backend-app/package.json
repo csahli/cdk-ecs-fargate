@@ -1,0 +1,27 @@
+{
+  "name": "backend-app",
+  "version": "2.0.0",
+  "description": "backend customer app",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [
+    "rest",
+    "mysql",
+    "nodejs"
+  ],
+  "author": "sahlic",
+  "license": "ISC",
+  "dependencies": {
+    "aws-xray-sdk": "^3.2.0",
+    "express": "^4.17.1",
+    "express-prom-bundle": "^6.3.4",
+    "pg": "8.6.0",
+    "pg-format": "^1.0.4",
+    "prom-client": "^13.1.0",
+    "supervillains": "^3.0.0"
+  },
+  "devDependencies": {}
+}
