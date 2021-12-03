@@ -66,7 +66,7 @@ export class CdkDBStack extends Stack {
           onePerAz: true,
           subnetGroupName: "rds",
         }),
-        performanceInsightRetention: 24*3600*7,
+        performanceInsightRetention: 7,
         instanceType: InstanceType.of(InstanceClass.R6G, InstanceSize.LARGE),
         securityGroups: [sg],
       },
