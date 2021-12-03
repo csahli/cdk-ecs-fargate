@@ -123,7 +123,7 @@ export class CdkDBStack extends Stack {
         {
           serviceNamespace: ServiceNamespace.RDS,
           minCapacity: 2,
-          maxCapacity: 4,
+          maxCapacity: 3,
           resourceId: 'cluster:'+cluster.clusterIdentifier,
           scalableDimension: 'rds:cluster:ReadReplicaCount',
         }
@@ -132,7 +132,7 @@ export class CdkDBStack extends Stack {
     readCapacity.scaleToTrackMetric(
         'rdsScalingTracking',
         {
-          targetValue: 5,
+          targetValue: 60,
           predefinedMetric: PredefinedMetric.RDS_READER_AVERAGE_CPU_UTILIZATION,
         }
     );
