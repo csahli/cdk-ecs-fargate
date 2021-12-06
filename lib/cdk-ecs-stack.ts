@@ -5,11 +5,12 @@ import * as ecs from '@aws-cdk/aws-ecs';
 import * as elb from '@aws-cdk/aws-elasticloadbalancingv2';
 import * as apiv2 from '@aws-cdk/aws-apigatewayv2';
 import * as apiIntegration from '@aws-cdk/aws-apigatewayv2-integrations';
-import { Vpc } from '@aws-cdk/aws-ec2';
+import * as secretsmanager from "@aws-cdk/aws-secretsmanager";
 
 interface ECSStackProps extends cdk.StackProps{
   vpc: ec2.Vpc;
   image: string;
+  dbSecret: secretsmanager.Secret;
   nlb: elb.NetworkLoadBalancer;
   //alb?: elb.ApplicationLoadBalancer;
 }
@@ -37,12 +38,21 @@ export class CdkEcsStack extends cdk.Stack {
       memoryLimitMiB: 2048,
     });
 
+
+
     taskDef.addContainer("AppContainer", {
       image: ecs.ContainerImage.fromRegistry(props.image),
       memoryLimitMiB: 256,
       essential: true,
       logging,
       portMappings: [{ containerPort: 8080, protocol: ecs.Protocol.TCP},],
+      secrets: {
+        "DBHOST": ecs.Secret.fromSecretsManager(props.dbSecret, 'host'),
+        "DBPORT": ecs.Secret.fromSecretsManager(props.dbSecret, 'port'),
+        "DBUSER": ecs.Secret.fromSecretsManager(props.dbSecret, 'username'),
+        "DBPASS": ecs.Secret.fromSecretsManager(props.dbSecret, 'password'),
+      },
+      environment: { "NODEPORT": "8080" }
     });
 
     const taskDefExecRolePolicyStmt = new iam.PolicyStatement({
@@ -53,13 +63,15 @@ export class CdkEcsStack extends cdk.Stack {
               'ecr:GetDownloadUrlForLayer',
               'ecr:BatchGetImage',
               'logs:CreateLogStream',
-              'logs:PutLogEvents'
+              'logs:PutLogEvents',
+              "secretsmanager:GetSecretValue",
+              "kms:Decrypt"
             ],
             resources: ["*"],
           });
 
     taskDef.addToExecutionRolePolicy(taskDefExecRolePolicyStmt);
-
+    
     const appSG = new ec2.SecurityGroup(this, 'AppSG', {
       vpc,
       description: `ECS Fargate Service Application Security Group`,
