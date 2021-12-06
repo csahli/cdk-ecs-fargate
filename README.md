@@ -12,6 +12,7 @@ Demo ECS Fargate Cluster Deployment with CDK Typescript
 - ECS Cluster
 - ECS Fargate Task Definition
 - ECS Service + ECS Task
+- Aurora Cluster + Secrets Manager Creds
 - HTTP API Gateway
 - API Gateway VPCLink
 
